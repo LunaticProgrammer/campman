@@ -41,7 +41,7 @@ const CampaignForm = (
             message: "Campaign description must be at least 20 characters.",
         }),
         launchDate: z.date(),
-        id: z.string()
+        id: z.string().optional()
     })
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -76,7 +76,7 @@ const CampaignForm = (
     return <>
         {
             selectedCampaign.id ?
-                <Card className="w-1/3">
+                <Card className="w-fit md:1/3">
                     <CardHeader>
                         <CardTitle className="mb-2 text-center">{selectedCampaign.campname}</CardTitle>
                         <hr />
@@ -85,7 +85,7 @@ const CampaignForm = (
                         <div className="flex gap-2 text-center text-md text-slate-400">{selectedCampaign.description}</div>
                         <div className="flex gap-2 text-md text-gray-600"><CalendarIcon /> {new Date(selectedCampaign.launchDate).toLocaleString()}</div>
                     </CardContent>
-                </Card > : <Card className="w-1/3">
+                </Card > : <Card className="w-fit md:1/3">
                     <CardHeader>
                         <CardTitle className="mb-2 text-center">Add a campaign</CardTitle>
                         <hr />
@@ -94,7 +94,14 @@ const CampaignForm = (
                         <Form {...form}>
                             <form onSubmit={(f) => {
                                 f.preventDefault()
-                                onSubmit(form.getValues())
+                                form.trigger()
+                                try {
+                                    FormSchema.parse(form.getValues())
+                                    onSubmit(form.getValues())
+
+                                } catch (e) {
+                                }
+                                // onSubmit(form.getValues())
                             }} className="space-y-6">
                                 <FormField
                                     disabled={Boolean(isWatchOnly)}
